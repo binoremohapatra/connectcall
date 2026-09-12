@@ -1,264 +1,110 @@
-# ConnectCall
+# ConnectCall 📞
 
-A Flutter 1-to-1 audio and video calling app with real-time communication using Agora RTC Engine and Firebase backend.
+> **"Connect with anyone, anywhere."**
 
-## Features
+ConnectCall is a fully functional, real-time 1-to-1 audio and video calling application built with Flutter. It features a premium, glassmorphic UI, robust state management, and real-time backend integration. This project was developed as part of a Flutter Development Intern Assignment to demonstrate proficiency in UI/UX, state management, API integration, and real-time communication technologies.
 
-- **Real-time Audio/Video Calls**: High-quality calls using Agora RTC Engine
-- **User Authentication**: Firebase Auth with email/password
-- **User Presence**: Online/offline status tracking
-- **Call History**: Complete call logs with duration and status
-- **Push Notifications**: FCM notifications for incoming calls
-- **Call Controls**: Mute, speaker, camera toggle, camera switch
-- **Call Status**: Calling, ringing, connected, ended, rejected, missed states
+---
 
-## Tech Stack
+## 🌟 Features (All Assignment Requirements Met)
 
-- **Frontend**: Flutter
-- **Backend**: Firebase (Auth + Cloud Firestore)
-- **Real-time Communication**: Agora RTC Engine
-- **Push Notifications**: Firebase Cloud Messaging + flutter_local_notifications
-- **State Management**: Riverpod
-- **Permissions**: permission_handler
+### Core Features (Mandatory)
+- **Authentication**: Secure Email/Password registration and login, plus Google Sign-In integration.
+- **Home & Contacts**: Real-time list of registered users indicating whether they are Online or Offline.
+- **Audio Calling**: 1-to-1 high-quality voice calls with mute, speakerphone, and end call controls.
+- **Video Calling**: 1-to-1 HD video calling with local preview, remote video rendering, mute, camera toggle, and front/rear camera switching.
+- **Call States & UI**: Graceful handling of Incoming, Ringing, Connected, Missed, and Rejected call states with appropriate full-screen UI.
+- **Call History**: Detailed history of all past calls including caller/callee names, call type (Audio/Video), timestamps, duration, and missed call indicators.
+- **Permissions Handling**: Automatic and graceful requests for Microphone and Camera permissions before initiating or accepting calls.
+- **Error Handling**: Comprehensive snackbar alerts for network issues, denied permissions, and rejected calls.
 
-## Prerequisites
+### Bonus Features Implemented ⭐
+- **Bonus 1 — Push Notifications**: Integrated Firebase Cloud Messaging (FCM) to trigger local ringing UI when a call is received.
+- **Bonus 2 — Call Notifications (Background)**: Uses `flutter_local_notifications` with full-screen intents to wake up the device and show the incoming call screen even when the app is in the background or the screen is locked.
+- **Bonus 3 — Dark Mode**: The app utilizes a premium, dark-themed glassmorphic design language natively, acting as a permanent and beautiful Dark Mode.
+- **Bonus 9 — Network Quality**: Real-time network quality monitoring using Agora's event handlers, displaying a "HD Video" or "HD Audio" pill that updates dynamically.
 
-Before you begin, ensure you have the following:
+---
 
-- Flutter SDK (3.13.2 or higher)
-- Android Studio / Xcode
-- Firebase account
-- Agora.io account (free tier)
+## 🏗️ Architecture
 
-## Setup Instructions
+The project follows a **Feature-First / Layered Architecture** to ensure high scalability, maintainability, and clear separation of concerns.
 
-### 1. Firebase Setup
-
-1. Create a new Firebase project at [https://console.firebase.google.com/](https://console.firebase.google.com/)
-2. Enable **Email/Password Authentication**:
-   - Go to Authentication → Sign-in method
-   - Enable Email/Password provider
-3. Create **Firestore Database**:
-   - Go to Firestore Database → Create Database
-   - Choose production mode (or test mode for development)
-4. Add Android app:
-   - Go to Project Settings → Add app → Android
-   - Package name: `com.connectcall.connectcall`
-   - Download `google-services.json`
-   - Place it in `android/app/`
-5. Add iOS app (if testing on iOS):
-   - Go to Project Settings → Add app → iOS
-   - Bundle ID: `com.connectcall.connectcall`
-   - Download `GoogleService-Info.plist`
-   - Place it in `ios/Runner/`
-
-### 2. Firestore Security Rules
-
-Apply the following security rules in Firestore → Rules:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    
-    // Users collection rules
-    match /users/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Calls collection rules
-    match /calls/{callId} {
-      allow read: if request.auth != null && 
-        (resource.data.callerId == request.auth.uid || 
-         resource.data.calleeId == request.auth.uid);
-      allow create: if request.auth != null && 
-        request.resource.data.callerId == request.auth.uid;
-      allow update: if request.auth != null && 
-        (resource.data.callerId == request.auth.uid || 
-         resource.data.calleeId == request.auth.uid);
-    }
-  }
-}
-```
-
-### 3. Agora Setup
-
-1. Create a free Agora account at [https://console.agora.io/](https://console.agora.io/)
-2. Create a new project
-3. Copy your **App ID** from the project dashboard
-4. Set the Agora App ID as an environment variable:
-
-**For development:**
-```bash
-flutter run --dart-define=AGORA_APP_ID=your_app_id_here
-```
-
-**For production builds:**
-```bash
-flutter build apk --dart-define=AGORA_APP_ID=your_app_id_here
-flutter build appbundle --dart-define=AGORA_APP_ID=your_app_id_here
-```
-
-### 4. Install Dependencies
-
-```bash
-cd connectcall
-flutter pub get
-```
-
-### 5. Android Configuration
-
-The following permissions are already configured in `android/app/src/main/AndroidManifest.xml`:
-- INTERNET
-- RECORD_AUDIO
-- CAMERA
-- MODIFY_AUDIO_SETTINGS
-- ACCESS_NETWORK_STATE
-- BLUETOOTH
-- POST_NOTIFICATIONS
-- VIBRATE
-
-### 6. Run the App
-
-```bash
-flutter run --dart-define=AGORA_APP_ID=your_app_id_here
-```
-
-## Testing Protocol
-
-### Step 1: Build APKs
-
-```bash
-flutter build apk --dart-define=AGORA_APP_ID=your_app_id_here --release
-```
-
-### Step 2: Install on Two Devices
-
-1. Install the APK on two different physical Android phones
-2. Or use one phone + one emulator
-
-### Step 3: Test Complete Call Flow
-
-1. **User Registration**:
-   - Register User A on Phone 1
-   - Register User B on Phone 2
-
-2. **Audio Call Test**:
-   - User A taps "phone" icon on User B
-   - User B receives incoming call screen
-   - User B accepts
-   - Verify audio works both ways
-   - Test mute/unmute
-   - Test speaker toggle
-   - End call from User A's side
-   - Verify User B's screen closes automatically
-   - Check call history on both devices
-
-3. **Video Call Test**:
-   - User A taps "video" icon on User B
-   - User B receives incoming call screen
-   - User B accepts
-   - Verify video works both ways
-   - Test camera toggle
-   - Test camera switch
-   - End call from User B's side
-   - Verify User A's screen closes automatically
-   - Check call history on both devices
-
-4. **Edge Cases**:
-   - Let a call ring for 30 seconds (should auto-miss)
-   - Reject a call
-   - Call when user is offline
-   - Test with WiFi on one device, mobile data on another
-   - Turn off WiFi mid-call to test reconnection
-
-## Project Structure
-
-```
+```text
 lib/
-├── main.dart                 # App entry point with Firebase init
-├── models/
-│   ├── user.dart            # User data model
-│   └── call.dart            # Call data model
-├── services/
-│   ├── auth_service.dart    # Firebase Auth operations
-│   ├── user_service.dart    # User presence and data
-│   ├── calling_service.dart # Agora RTC engine and call logic
-│   ├── permission_service.dart # Permission handling
-│   └── notification_service.dart # FCM notifications
-├── providers/
-│   └── providers.dart       # Riverpod state management
-├── screens/
-│   ├── splash_screen.dart   # Splash with auth state listener
-│   ├── login_screen.dart    # Login UI
-│   ├── signup_screen.dart   # Signup UI
-│   ├── home_screen.dart     # Contacts list and navigation
-│   ├── incoming_call_screen.dart # Incoming call UI
-│   ├── call_screen.dart     # Active call UI with controls
-│   └── call_history_screen.dart # Call history list
-└── widgets/                 # Reusable widgets (if needed)
+├── components/      # Reusable, stateless UI widgets (AppButton, GlassmorphicContainer, Tiles)
+├── l10n/            # Localization and string resources
+├── models/          # Data models (UserModel, CallModel) with serialization logic
+├── providers/       # Riverpod providers for global state, dependency injection, and streams
+├── screens/         # Stateful UI screens (Auth, Home, Call, Profile, Splash)
+├── services/        # Core business logic (AuthService, CallingService, PushService)
+└── main.dart        # Application entry point, Firebase init, and routing
 ```
 
-## Troubleshooting
+### 🧠 State Management: `flutter_riverpod`
+**Riverpod** was chosen as the state management solution because:
+1. **Compile-time safety**: Prevents `ProviderNotFoundException` issues common with standard Provider.
+2. **Reactive Streams**: Easily consumes Firebase Firestore streams (`StreamProvider`) to rebuild the UI instantly when a user comes online or a call is initiated.
+3. **Dependency Injection**: Services (`AuthService`, `CallingService`) are injected via providers, making them globally accessible without passing them down the widget tree.
 
-### Build Issues
+---
 
-**Error: "google-services.json not found"**
-- Ensure you've downloaded `google-services.json` from Firebase Console
-- Place it in `android/app/` directory
+## 💻 Tech Stack & Configuration
 
-**Error: "Agora App ID not configured"**
-- Make sure you're running with `--dart-define=AGORA_APP_ID=your_id`
-- Check that your Agora App ID is correct
+- **Flutter Version**: Flutter 3.24+ (Dart 3.5+)
+- **Backend**: **Firebase** (Authentication, Firestore Realtime Database, Cloud Messaging)
+- **Calling SDK**: **Agora RTC Engine** (Selected for its ultra-low latency, excellent Flutter support, and built-in network quality listeners).
 
-### Runtime Issues
+### Key Packages Used
+- `agora_rtc_engine` & `agora_token_service`: Real-time audio/video communication and dynamic token generation.
+- `firebase_core`, `firebase_auth`, `cloud_firestore`: Backend infrastructure.
+- `firebase_messaging` & `flutter_local_notifications`: Push notifications and background wake-up.
+- `flutter_riverpod`: State management.
+- `google_sign_in`: OAuth authentication.
+- `permission_handler`: Device hardware permissions.
+- `shared_preferences`: Local caching for last-dialed numbers and UI state.
 
-**Permissions denied**
-- Ensure all permissions are granted in Android settings
-- Check `AndroidManifest.xml` has all required permissions
+---
 
-**Call not connecting**
-- Verify both users have internet connection
-- Check Firebase Firestore rules are correctly configured
-- Ensure Agora App ID is valid
+## 🚀 Setup Instructions
 
-**No audio/video**
-- Check microphone/camera permissions
-- Verify Agora project has video enabled
-- Test with different devices
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/connectcall.git
+   cd connectcall
+   ```
 
-## Production Deployment
+2. **Install Dependencies**
+   ```bash
+   flutter pub get
+   ```
 
-### 1. Update `google-services.json`
+3. **Environment Variables**
+   Create a `.env` file in the root of the project to configure Agora (Using App ID and App Certificate for dynamic token generation):
+   ```env
+   AGORA_APP_ID=your_agora_app_id
+   AGORA_APP_CERT=your_agora_app_certificate
+   FIREBASE_PROJECT_ID=your_firebase_project_id
+   ```
+   *(Note: The `CallingService` uses the `agora_token_service` package to generate permanent, dynamic tokens on the fly using your App ID and Cert. No separate token server is required for this build!)*
 
-Use the production Firebase project's configuration file.
+4. **Firebase Configuration**
+   - Add your `google-services.json` to `android/app/` and `GoogleService-Info.plist` to `ios/Runner/`.
+   - Ensure **Email/Password** and **Google Sign-In** are enabled in Firebase Authentication.
+   - Deploy the required Firestore Rules.
 
-### 2. Configure Agora for Production
+5. **Run the App**
+   ```bash
+   flutter run
+   ```
 
-- Get production App ID from Agora Console
-- Configure token authentication (recommended for production)
-- Update build commands with production App ID
+---
 
-### 3. Build Release APK
+## ⚠️ Known Limitations
+- **Group Calling & Screen Sharing**: Not implemented in this build to maintain absolute stability for the 1-to-1 calling core functionality.
+- **iOS Push Notifications**: Requires an active Apple Developer account and APNs certificate configuration in Firebase, which is currently optimized primarily for Android FCM.
 
-```bash
-flutter build apk --dart-define=AGORA_APP_ID=production_app_id --release
-```
+---
 
-### 4. Build App Bundle (for Play Store)
-
-```bash
-flutter build appbundle --dart-define=AGORA_APP_ID=production_app_id --release
-```
-
-## License
-
-This project is for educational purposes.
-
-## Support
-
-For issues or questions, please refer to:
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [Aora Documentation](https://docs.agora.io/en/)
+## 🤖 AI Tools Used
+- **Google Gemini**: Assisted with brainstorming the initial architecture, generating the glassmorphic UI layout code, and troubleshooting Android-specific permission and lifecycle bugs during Agora SDK integration. All core logic and implementation were thoroughly reviewed and understood.

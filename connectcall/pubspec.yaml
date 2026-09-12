@@ -45,6 +45,7 @@ dependencies:
   shared_preferences: ^2.5.5
   googleapis_auth: ^2.3.3
   google_sign_in: ^6.2.1
+  agora_token_service: ^0.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,6 +57,8 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/logo.png"
   min_sdk_android: 21
+  adaptive_icon_background: "#0B0D17"
+  adaptive_icon_foreground: "assets/icons/logo.png"
 
 flutter:
   uses-material-design: true
