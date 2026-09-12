@@ -503,7 +503,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                             value: _notifGranted ?? false,
                             activeColor: AppColors.primary,
-                            activeTrackColor: AppColors.primary30,
+                            activeTrackColor: AppColors.primary20,
                             inactiveThumbColor: AppColors.secondaryText,
                             inactiveTrackColor: AppColors.surface30,
                             onChanged: (val) async {
@@ -546,7 +546,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                             value: _camGranted ?? false,
                             activeColor: AppColors.primary,
-                            activeTrackColor: AppColors.primary30,
+                            activeTrackColor: AppColors.primary20,
                             inactiveThumbColor: AppColors.secondaryText,
                             inactiveTrackColor: AppColors.surface30,
                             onChanged: (val) async {
@@ -572,7 +572,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                             value: _micGranted ?? false,
                             activeColor: AppColors.primary,
-                            activeTrackColor: AppColors.primary30,
+                            activeTrackColor: AppColors.primary20,
                             inactiveThumbColor: AppColors.secondaryText,
                             inactiveTrackColor: AppColors.surface30,
                             onChanged: (val) async {
