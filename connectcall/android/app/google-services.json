@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "603542173656",
+    "project_id": "callconnect-59d06",
+    "storage_bucket": "callconnect-59d06.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603542173656:android:58decc7fbf1690a772a4ad",
+        "android_client_info": {
+          "package_name": "com.connectcall.connectcall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "603542173656-nbhq9dlkq3a65hhkn58scnav5dbqlokt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.connectcall.connectcall",
+            "certificate_hash": "a9330ad41b4a75b15d3bc72b9dadfea316c53bba"
+          }
+        },
+        {
+          "client_id": "603542173656-07s6esi02g7qpen8vcoq2p9krus6i20o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDryrQiHNb6qj0oUQlTmwckDMjPIVFo1Jw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "603542173656-07s6esi02g7qpen8vcoq2p9krus6i20o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
