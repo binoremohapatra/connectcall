@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
+import '../providers/locale_provider.dart';
+import '../l10n/app_translations.dart';
 import '../models/call.dart';
 import '../models/user.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +27,7 @@ class _CallHistoryScreenState extends ConsumerState<CallHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserModelProvider);
+    final locale = ref.watch(localeProvider);
 
     return userAsync.when(
       data: (user) {
@@ -38,7 +41,10 @@ class _CallHistoryScreenState extends ConsumerState<CallHistoryScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               child: TabGroup(
-                labels: const ['All Calls', 'Missed'],
+                labels: [
+                  AppTranslations.get(locale, 'all_calls'),
+                  AppTranslations.get(locale, 'missed'),
+                ],
                 selectedIndex: _tabIndex,
                 onChanged: (idx) => setState(() => _tabIndex = idx),
               ),
@@ -66,12 +72,12 @@ class _HistoryList extends ConsumerWidget {
   
   const _HistoryList({required this.currentUser, this.showOnlyMissed = false});
 
-  String _formatTime(DateTime time) {
+  String _formatTime(DateTime time, String locale) {
     final now = DateTime.now();
     if (time.year == now.year && time.month == now.month && time.day == now.day) {
-      return 'Today, ${DateFormat.jm().format(time)}';
+      return '${AppTranslations.get(locale, 'today')}, ${DateFormat.jm().format(time)}';
     } else if (time.year == now.year && time.month == now.month && time.day == now.day - 1) {
-      return 'Yesterday, ${DateFormat.jm().format(time)}';
+      return '${AppTranslations.get(locale, 'yesterday')}, ${DateFormat.jm().format(time)}';
     }
     return DateFormat('MMM d, h:mm a').format(time);
   }
@@ -223,6 +229,7 @@ class _HistoryList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final callsAsync = ref.watch(callHistoryProvider(currentUser.uid));
+    final locale = ref.watch(localeProvider);
 
     return callsAsync.when(
       data: (calls) {
@@ -242,14 +249,16 @@ class _HistoryList extends ConsumerWidget {
                 Icon(Icons.history_rounded, size: 60, color: AppColors.alternate),
                 const SizedBox(height: 16),
                 Text(
-                  showOnlyMissed ? 'No missed calls' : 'No call history yet',
+                  showOnlyMissed 
+                      ? AppTranslations.get(locale, 'no_missed_calls') 
+                      : AppTranslations.get(locale, 'no_call_history'),
                   style: AppTextStyles.bodyMedium.copyWith(color: AppColors.secondaryText),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   showOnlyMissed
-                      ? 'All your calls were answered.'
-                      : 'Start a call from the Contacts tab.',
+                      ? AppTranslations.get(locale, 'all_calls_answered')
+                      : AppTranslations.get(locale, 'start_call_contacts'),
                   style: AppTextStyles.bodySmall,
                 ),
               ],
@@ -279,7 +288,7 @@ class _HistoryList extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 12),
               child: CallHistoryTile(
                 name: otherName,
-                time: _formatTime(call.startTime),
+                time: _formatTime(call.startTime, locale),
                 isMissed: isMissed,
                 isVideo: call.type == 'video',
                 type: typeStr,

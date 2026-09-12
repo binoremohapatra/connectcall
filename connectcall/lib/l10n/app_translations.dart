@@ -32,6 +32,35 @@ class AppTranslations {
       'online': 'Online',
       'offline': 'Offline',
       'connecting': 'Connecting...',
+      
+      // Home Tab
+      'good_morning': 'Good morning,',
+      'good_afternoon': 'Good afternoon,',
+      'good_evening': 'Good evening,',
+      'contacts_sub': 'Find & call people',
+      'history_sub': 'Recent calls',
+      'online_now': 'Online Now',
+      'see_all': 'See all',
+      'total_calls': 'Total Calls',
+      'missed': 'Missed',
+      'minutes': 'Minutes',
+
+      // Contacts Tab
+      'search_by_name': 'Search by name...',
+      'recents': 'Recents',
+      'all_contacts': 'All Contacts',
+      'active_now': 'Active now',
+
+      // History Tab
+      'all_calls': 'All Calls',
+      'today': 'Today',
+      'yesterday': 'Yesterday',
+      'no_contacts_yet': 'No contacts yet.',
+      'no_matches_for': 'No matches for',
+      'no_missed_calls': 'No missed calls',
+      'no_call_history': 'No call history yet',
+      'all_calls_answered': 'All your calls were answered.',
+      'start_call_contacts': 'Start a call from the Contacts tab.',
     },
     'hi': {
       'language': 'हिंदी (Hindi)',
@@ -67,6 +96,35 @@ class AppTranslations {
       'online': 'ऑनलाइन',
       'offline': 'ऑफ़लाइन',
       'connecting': 'कनेक्ट हो रहा है...',
+      
+      // Home Tab
+      'good_morning': 'शुभ प्रभात,',
+      'good_afternoon': 'शुभ दोपहर,',
+      'good_evening': 'शुभ संध्या,',
+      'contacts_sub': 'लोगों को खोजें और कॉल करें',
+      'history_sub': 'हाल की कॉल',
+      'online_now': 'अभी ऑनलाइन',
+      'see_all': 'सभी देखें',
+      'total_calls': 'कुल कॉल',
+      'missed': 'मिस्ड',
+      'minutes': 'मिनट',
+
+      // Contacts Tab
+      'search_by_name': 'नाम से खोजें...',
+      'recents': 'हाल ही के',
+      'all_contacts': 'सभी संपर्क',
+      'active_now': 'अभी सक्रिय',
+
+      // History Tab
+      'all_calls': 'सभी कॉल',
+      'today': 'आज',
+      'yesterday': 'कल',
+      'no_contacts_yet': 'अभी तक कोई संपर्क नहीं।',
+      'no_matches_for': 'के लिए कोई मेल नहीं',
+      'no_missed_calls': 'कोई मिस्ड कॉल नहीं',
+      'no_call_history': 'अभी तक कोई कॉल इतिहास नहीं',
+      'all_calls_answered': 'आपकी सभी कॉलों का उत्तर दिया गया।',
+      'start_call_contacts': 'संपर्क टैब से कॉल शुरू करें।',
     }
   };
 

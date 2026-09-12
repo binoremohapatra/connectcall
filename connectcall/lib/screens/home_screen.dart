@@ -277,6 +277,7 @@ class _HomeTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final usersAsync = ref.watch(usersListProvider(currentUser.uid));
+    final locale = ref.watch(localeProvider);
 
     return CustomScrollView(
       slivers: [
@@ -288,7 +289,7 @@ class _HomeTab extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _greeting(),
+                  _greeting(locale),
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.secondaryText,
                   ),
@@ -315,8 +316,8 @@ class _HomeTab extends ConsumerWidget {
                 Expanded(
                   child: _QuickCard(
                     icon: Icons.people_rounded,
-                    label: 'Contacts',
-                    sublabel: 'Find & call people',
+                    label: AppTranslations.get(locale, 'contacts'),
+                    sublabel: AppTranslations.get(locale, 'contacts_sub'),
                     color: AppColors.primary,
                     onTap: onGoToContacts,
                   ),
@@ -325,8 +326,8 @@ class _HomeTab extends ConsumerWidget {
                 Expanded(
                   child: _QuickCard(
                     icon: Icons.history_rounded,
-                    label: 'History',
-                    sublabel: 'Recent calls',
+                    label: AppTranslations.get(locale, 'history'),
+                    sublabel: AppTranslations.get(locale, 'history_sub'),
                     color: AppColors.secondary,
                     onTap: onGoToHistory,
                   ),
@@ -345,11 +346,11 @@ class _HomeTab extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Online Now', style: AppTextStyles.titleMedium),
+                Text(AppTranslations.get(locale, 'online_now'), style: AppTextStyles.titleMedium),
                 GestureDetector(
                   onTap: onGoToContacts,
                   child: Text(
-                    'See all',
+                    AppTranslations.get(locale, 'see_all'),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
@@ -383,7 +384,7 @@ class _HomeTab extends ConsumerWidget {
                         const SizedBox(width: 16),
                         Expanded(
                           child: Text(
-                            'No contacts online right now.',
+                            AppTranslations.get(locale, 'offline'),
                             style: AppTextStyles.bodyMedium.copyWith(
                                 color: AppColors.secondaryText),
                           ),
@@ -441,11 +442,11 @@ class _HomeTab extends ConsumerWidget {
     );
   }
 
-  String _greeting() {
+  String _greeting(String locale) {
     final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning,';
-    if (h < 17) return 'Good afternoon,';
-    return 'Good evening,';
+    if (h < 12) return AppTranslations.get(locale, 'good_morning');
+    if (h < 17) return AppTranslations.get(locale, 'good_afternoon');
+    return AppTranslations.get(locale, 'good_evening');
   }
 }
 
@@ -510,6 +511,8 @@ class _StatsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final callsAsync = ref.watch(callHistoryProvider(currentUser.uid));
 
+    final locale = ref.watch(localeProvider);
+
     return GlassmorphicContainer(
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(20),
@@ -524,11 +527,11 @@ class _StatsCard extends ConsumerWidget {
 
           return Row(
             children: [
-              _StatItem(label: 'Total Calls', value: '$total'),
+              _StatItem(label: AppTranslations.get(locale, 'total_calls'), value: '$total'),
               _StatDivider(),
-              _StatItem(label: 'Missed', value: '$missed'),
+              _StatItem(label: AppTranslations.get(locale, 'missed'), value: '$missed'),
               _StatDivider(),
-              _StatItem(label: 'Minutes', value: '$minutes'),
+              _StatItem(label: AppTranslations.get(locale, 'minutes'), value: '$minutes'),
             ],
           );
         },
@@ -644,6 +647,7 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
   @override
   Widget build(BuildContext context) {
     final usersAsync = ref.watch(usersListProvider(widget.currentUser.uid));
+    final locale = ref.watch(localeProvider);
 
     return usersAsync.when(
       data: (users) {
@@ -669,7 +673,7 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
               padding: const EdgeInsets.all(24),
               sliver: SliverToBoxAdapter(
                 child: AppSearchBar(
-                  hint: 'Search by name...',
+                  hint: AppTranslations.get(locale, 'search_by_name'),
                   value: _searchQuery,
                   onChanged: (val) => setState(() => _searchQuery = val),
                   onClear: () => setState(() => _searchQuery = ''),
@@ -681,7 +685,7 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 sliver: SliverToBoxAdapter(
-                  child: Text('Recents', style: AppTextStyles.titleMedium),
+                  child: Text(AppTranslations.get(locale, 'recents'), style: AppTextStyles.titleMedium),
                 ),
               ),
               SliverPadding(
@@ -712,7 +716,7 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverToBoxAdapter(
-                child: Text('All Contacts', style: AppTextStyles.titleMedium),
+                child: Text(AppTranslations.get(locale, 'all_contacts'), style: AppTextStyles.titleMedium),
               ),
             ),
             
@@ -726,7 +730,9 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
                           size: 60, color: AppColors.alternate),
                       const SizedBox(height: 16),
                       Text(
-                        _searchQuery.isEmpty ? 'No contacts yet.' : 'No matches for "$_searchQuery".',
+                        _searchQuery.isEmpty 
+                            ? AppTranslations.get(locale, 'no_contacts_yet') 
+                            : '${AppTranslations.get(locale, 'no_matches_for')} "$_searchQuery".',
                         style: AppTextStyles.bodyMedium.copyWith(color: AppColors.secondaryText),
                       ),
                     ],
@@ -746,7 +752,9 @@ class _ContactsTabState extends ConsumerState<_ContactsTab> {
                           name: u.name,
                           photoUrl: u.photoUrl,
                           isOnline: u.isOnline,
-                          status: u.isOnline ? 'Active now' : 'Offline',
+                          status: u.isOnline 
+                              ? AppTranslations.get(locale, 'active_now') 
+                              : AppTranslations.get(locale, 'offline'),
                           onAudioCall: () => _startCall(u, 'audio', context),
                           onVideoCall: () => _startCall(u, 'video', context),
                         ),
