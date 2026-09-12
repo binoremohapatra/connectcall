@@ -540,29 +540,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         _buildSettingRow(
                           icon: Icons.videocam_rounded,
-                          title: AppTranslations.get(locale, 'camera'),
-                          subtitle: _camGranted == true
-                              ? AppTranslations.get(locale, 'camera_granted')
-                              : AppTranslations.get(locale, 'camera_req'),
-                          subtitleColor: _camGranted == true
-                              ? AppColors.success
-                              : null,
-                          onTap: () =>
-                              _handlePermission(Permission.camera, 'Camera'),
+                          title: AppTranslations.get(locale, 'camera_access'),
+                          subtitle: _camGranted == true ? 'Granted ✓' : 'Denied ✗',
+                          subtitleColor: _camGranted == true ? AppColors.success : AppColors.error,
+                          trailing: Switch(
+                            value: _camGranted ?? false,
+                            activeColor: AppColors.primary,
+                            activeTrackColor: AppColors.primary30,
+                            inactiveThumbColor: AppColors.secondaryText,
+                            inactiveTrackColor: AppColors.surface30,
+                            onChanged: (val) async {
+                              if (val) {
+                                final status = await Permission.camera.request();
+                                if (status.isPermanentlyDenied) openAppSettings();
+                              } else {
+                                openAppSettings();
+                                _showSnack('Disable camera access in device settings');
+                              }
+                              await _refreshPermissionStatus();
+                            },
+                          ),
+                          onTap: openAppSettings,
                         ),
                         Divider(
                             color: Colors.white.withValues(alpha: 0.05), height: 1),
                         _buildSettingRow(
                           icon: Icons.mic_rounded,
-                          title: AppTranslations.get(locale, 'mic'),
-                          subtitle: _micGranted == true
-                              ? AppTranslations.get(locale, 'mic_granted')
-                              : AppTranslations.get(locale, 'mic_req'),
-                          subtitleColor: _micGranted == true
-                              ? AppColors.success
-                              : null,
-                          onTap: () => _handlePermission(
-                              Permission.microphone, 'Microphone'),
+                          title: AppTranslations.get(locale, 'microphone'),
+                          subtitle: _micGranted == true ? 'Granted ✓' : 'Denied ✗',
+                          subtitleColor: _micGranted == true ? AppColors.success : AppColors.error,
+                          trailing: Switch(
+                            value: _micGranted ?? false,
+                            activeColor: AppColors.primary,
+                            activeTrackColor: AppColors.primary30,
+                            inactiveThumbColor: AppColors.secondaryText,
+                            inactiveTrackColor: AppColors.surface30,
+                            onChanged: (val) async {
+                              if (val) {
+                                final status = await Permission.microphone.request();
+                                if (status.isPermanentlyDenied) openAppSettings();
+                              } else {
+                                openAppSettings();
+                                _showSnack('Disable microphone access in device settings');
+                              }
+                              await _refreshPermissionStatus();
+                            },
+                          ),
+                          onTap: openAppSettings,
                         ),
                         Divider(
                             color: Colors.white.withValues(alpha: 0.05), height: 1),

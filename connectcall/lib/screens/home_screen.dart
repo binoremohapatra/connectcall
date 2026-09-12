@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
+import '../providers/locale_provider.dart';
+import '../l10n/app_translations.dart';
 import '../models/user.dart';
 import '../models/call.dart';
 
@@ -220,15 +222,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(UserModel user) {
+    final locale = ref.watch(localeProvider);
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       title: Text(
         switch (_selectedIndex) {
-          0 => 'ConnectCall',
-          1 => 'Contacts',
-          2 => 'Call History',
-          _ => 'Settings',
+          0 => AppTranslations.get(locale, 'home'),
+          1 => AppTranslations.get(locale, 'contacts'),
+          2 => AppTranslations.get(locale, 'history'),
+          _ => AppTranslations.get(locale, 'settings'),
         },
         style: AppTextStyles.titleLarge,
       ),

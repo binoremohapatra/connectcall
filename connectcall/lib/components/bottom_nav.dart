@@ -2,20 +2,24 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 import 'animated_gradient_bg.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/locale_provider.dart';
+import '../l10n/app_translations.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  AppBottomNav — matches BottomNavWidget + NavItemWidget from FlutterFlow
 //  Fixed bottom navigation bar with icon + label tabs.
 // ─────────────────────────────────────────────────────────────────────────────
 
-class AppBottomNav extends StatelessWidget {
+class AppBottomNav extends ConsumerWidget {
   final int selectedIndex;
   final void Function(int) onTap;
 
   static const _tabs = [
-    _NavTab(icon: Icons.home_rounded, label: 'Home'),
-    _NavTab(icon: Icons.people_rounded, label: 'Contacts'),
-    _NavTab(icon: Icons.history_rounded, label: 'History'),
-    _NavTab(icon: Icons.settings_rounded, label: 'Settings'),
+    _NavTab(icon: Icons.home_rounded, labelKey: 'home'),
+    _NavTab(icon: Icons.people_rounded, labelKey: 'contacts'),
+    _NavTab(icon: Icons.history_rounded, labelKey: 'history'),
+    _NavTab(icon: Icons.settings_rounded, labelKey: 'settings'),
   ];
 
   const AppBottomNav({
@@ -25,7 +29,8 @@ class AppBottomNav extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
     return GlassmorphicContainer(
       borderRadius: BorderRadius.zero,
       padding: EdgeInsets.zero,
@@ -41,7 +46,7 @@ class AppBottomNav extends StatelessWidget {
               final tab = _tabs[i];
               return _NavItem(
                 icon: tab.icon,
-                label: tab.label,
+                label: AppTranslations.get(locale, tab.labelKey),
                 isSelected: isSelected,
                 onTap: () => onTap(i),
               );
@@ -55,8 +60,8 @@ class AppBottomNav extends StatelessWidget {
 
 class _NavTab {
   final IconData icon;
-  final String label;
-  const _NavTab({required this.icon, required this.label});
+  final String labelKey;
+  const _NavTab({required this.icon, required this.labelKey});
 }
 
 class _NavItem extends StatelessWidget {
