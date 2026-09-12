@@ -55,6 +55,12 @@ class ControlButton extends StatelessWidget {
             label!,
             style: AppTextStyles.bodySmall,
           ),
+        ] else ...[
+          const SizedBox(height: 6),
+          Text(
+            ' ', // Placeholder to keep the icons vertically aligned
+            style: AppTextStyles.bodySmall,
+          ),
         ],
       ],
     );
