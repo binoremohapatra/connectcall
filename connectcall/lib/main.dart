@@ -62,9 +62,10 @@ class _ConnectCallAppState extends ConsumerState<ConnectCallApp>
 
       // Initialize Agora engine early if App ID is configured
       final agoraAppId = ref.read(agoraAppIdProvider);
-      if (agoraAppId.isNotEmpty) {
+      final agoraAppCert = ref.read(agoraAppCertProvider);
+      if (agoraAppId.isNotEmpty && agoraAppCert.isNotEmpty) {
         final callingService = ref.read(callingServiceProvider);
-        await callingService.initialize(appId: agoraAppId);
+        await callingService.initialize(appId: agoraAppId, appCert: agoraAppCert);
       }
 
       // Update FCM token for the currently logged-in user (if any)

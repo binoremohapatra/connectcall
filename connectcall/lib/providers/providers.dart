@@ -48,12 +48,14 @@ final currentUserModelProvider = StreamProvider<UserModel?>((ref) {
   return ref.watch(authServiceProvider).currentUserModelStream();
 });
 
-// ── Agora App ID ──────────────────────────────────────────────────────────
+// ── Agora Config ──────────────────────────────────────────────────────────
 
-/// Agora App ID passed via --dart-define=AGORA_APP_ID=xxx at build time.
 final agoraAppIdProvider = Provider<String>((ref) {
-  const id = String.fromEnvironment('AGORA_APP_ID', defaultValue: '6571d2b8e21a44c195b0ab99363253c8');
-  return id;
+  return '74ab349c3cbb41f0aab67dc9bb189a98';
+});
+
+final agoraAppCertProvider = Provider<String>((ref) {
+  return 'ac4362c5978b473890de8963b5595d68';
 });
 
 // ── Users / Contacts ──────────────────────────────────────────────────────

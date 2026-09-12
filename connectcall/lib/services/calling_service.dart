@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_token_service/agora_token_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -52,10 +53,16 @@ class CallingService extends ChangeNotifier {
   int get networkQuality => _networkQuality;
   String? get currentCallId => _currentCallId;
 
+  String? _appId;
+  String? _appCert;
+
   // ── Initialization ────────────────────────────────────────────────────────
 
-  Future<void> initialize({required String appId}) async {
+  Future<void> initialize({required String appId, required String appCert}) async {
     if (_isInitialized) return;
+    
+    _appId = appId;
+    _appCert = appCert;
 
     _engine = createAgoraRtcEngine();
     await _engine!.initialize(RtcEngineContext(
@@ -158,9 +165,8 @@ class CallingService extends ChangeNotifier {
     if (!_isInitialized) throw Exception('Agora engine not initialized');
 
     // 2. Create Firestore call document
-    // Temporary testing channel name to match the token
-    final channelName = 'test';
     final callId = _firestore.collection('calls').doc().id;
+    final channelName = callId; // Dynamic channel for every call!
 
     final call = CallModel(
       callId: callId,
@@ -471,9 +477,23 @@ class CallingService extends ChangeNotifier {
   }
 
   Future<void> _joinChannel(String channelName, {required String type}) async {
-    await _engine!.joinChannel(
-      token: '007eJxTYLjycLdNoK+nyrxE1uX6C972H/918KtfTuFVhe0St3a4zPZUYDBNS0oxSDRKNTJNNTYxNzZKNEwzTklOM7Q0NjZMSbYwfhC6NKshkJFhiUgIAyMUgvgsDCWpxSUMDAC3OSCt', // Temp token provided by user
+    if (_appId == null || _appCert == null) {
+      debugPrint('[CallingService] Cannot join: App ID or Cert not initialized.');
+      return;
+    }
 
+    final expireTimestamp = (DateTime.now().millisecondsSinceEpoch ~/ 1000) + 3600; // 1 hour token
+    final token = RtcTokenBuilder.build(
+      appId: _appId!,
+      appCertificate: _appCert!,
+      channelName: channelName,
+      uid: '0',
+      role: RtcRole.publisher,
+      expireTimestamp: expireTimestamp,
+    );
+
+    await _engine!.joinChannel(
+      token: token,
       channelId: channelName,
       uid: 0, // Let Agora assign a UID
       options: ChannelMediaOptions(

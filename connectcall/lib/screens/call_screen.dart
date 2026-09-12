@@ -370,7 +370,7 @@ class _VideoCallScreen extends StatelessWidget {
               controller: VideoViewController.remote(
                 rtcEngine: callingService.engine!,
                 canvas: VideoCanvas(uid: callingService.remoteUid!),
-                connection: const RtcConnection(channelId: 'test'),
+                connection: RtcConnection(channelId: callingService.currentCallId!),
               ),
             ),
           ),
