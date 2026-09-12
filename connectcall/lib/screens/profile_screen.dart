@@ -27,6 +27,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   bool? _micGranted;
   bool? _camGranted;
+  bool? _notifGranted;
 
   @override
   void initState() {
@@ -37,10 +38,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _refreshPermissionStatus() async {
     final mic = await Permission.microphone.status;
     final cam = await Permission.camera.status;
+    final notif = await Permission.notification.status;
     if (mounted) {
       setState(() {
         _micGranted = mic.isGranted;
         _camGranted = cam.isGranted;
+        _notifGranted = notif.isGranted;
       });
     }
   }
@@ -497,24 +500,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           icon: Icons.notifications_active_rounded,
                           title: AppTranslations.get(locale, 'notifications'),
                           subtitle: AppTranslations.get(locale, 'notifications_sub'),
-                          onTap: () async {
-                            final status =
-                                await Permission.notification.status;
-                            if (status.isGranted) {
-                              _showSnack('Notifications are enabled ✓');
-                            } else {
-                              final result =
-                                  await Permission.notification.request();
-                              if (!mounted) return;
-                              if (result.isGranted) {
-                                _showSnack('Notifications enabled ✓');
-                              } else if (result.isPermanentlyDenied) {
-                                openAppSettings();
+                          trailing: Switch(
+                            value: _notifGranted ?? false,
+                            activeColor: AppColors.primary,
+                            activeTrackColor: AppColors.primary30,
+                            inactiveThumbColor: AppColors.secondaryText,
+                            inactiveTrackColor: AppColors.surface30,
+                            onChanged: (val) async {
+                              if (val) {
+                                final status = await Permission.notification.status;
+                                if (!status.isGranted) {
+                                  final result = await Permission.notification.request();
+                                  if (result.isPermanentlyDenied) {
+                                    openAppSettings();
+                                  } else if (result.isGranted) {
+                                    _showSnack('Notifications enabled ✓');
+                                  } else {
+                                    _showSnack('Notifications denied. Enable in device Settings.');
+                                  }
+                                }
                               } else {
-                                _showSnack(
-                                    'Notifications denied. Enable in device Settings.');
+                                openAppSettings(); // Can't disable programmatically, open settings
+                                _showSnack('Disable notifications in device settings');
                               }
-                            }
+                              await _refreshPermissionStatus();
+                            },
+                          ),
+                          onTap: () async {
+                            openAppSettings();
                           },
                         ),
                       ],
